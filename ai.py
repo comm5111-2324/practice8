@@ -1,23 +1,24 @@
 import torch
 from diffusers import StableDiffusionPipeline
-import ssl
-ssl._create_default_https_context = ssl._create_unverified_context
+import os
 
-model_id = 'stabilityai/stable-diffusion-2-1'
-pipe = StableDiffusionPipeline.from_pretrained(model_id)
+pipe = StableDiffusionPipeline.from_pretrained("stabilityai/stable-diffusion-2-1")
 pipe = pipe.to('cuda' if torch.cuda.is_available() else 'cpu')
 
 def generate_image(prompt, file_path):
-    images = pipe(prompt,
-                  width=240,
-                  height=240,
-                  torch_dtype=torch.float16,
-                  num_inference_steps = 25,  # Higher the better but slower
-                  revision = "fp16",
-                  guidance_scale = 9,
-                  num_images_per_prompt = 1).images
-    images[0].save(file_path)
+    if not os.path.exists(file_path):
+        images = pipe(prompt,
+                    height=480,
+                    width=480,
+                    torch_dtype=torch.float16,
+                    revision = "fp16",
+                    num_inference_steps = 25,  # Higher the better but slower
+                    guidance_scale = 7.5,
+                    num_images_per_prompt = 1).images
+        images[0].save(file_path)
+    else:
+        print(f'File {file_path} already exists')
 
 if __name__ == '__main__':
     # Test
-    generate_image('Hong Kong', 'static/chinese university.jpg')
+    generate_image('chinese university', 'static/chinese university.jpg')

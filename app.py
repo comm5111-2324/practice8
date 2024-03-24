@@ -6,6 +6,8 @@ app = Flask(__name__)
 @app.route('/generate')
 def generate():
     prompt = None
+    # Add codes to handle GET request args
+    # If args exists, pass the prompt into generate_image()
     return render_template('generate.html', prompt=prompt)
 
 @app.route('/')
